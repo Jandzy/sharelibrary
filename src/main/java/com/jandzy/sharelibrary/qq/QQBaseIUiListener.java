@@ -3,6 +3,7 @@ package com.jandzy.sharelibrary.qq;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.jandzy.sharelibrary.PlatformConfig;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.util.Util;
 import com.tencent.connect.common.Constants;
@@ -31,23 +32,23 @@ public class QQBaseIUiListener implements IUiListener {
     public void onComplete(Object o) {
         if ((null == o) || ((JSONObject)o == null))
         {
-            authListener.onError(1, "onComplete response=null");
+            authListener.onError(PlatformConfig.PlatformType.QQ, "onComplete response=null");
             return;
         }
         JSONObject response = (JSONObject)o;
-        authListener.onComplete(1, Util.jsonToMap((JSONObject) o));
+        authListener.onComplete(PlatformConfig.PlatformType.QQ, Util.jsonToMap((JSONObject) o));
         initOpenidAndToken(response);
         mTencent.logout(mContext);
     }
 
     @Override
     public void onError(UiError uiError) {
-        authListener.onError(1,uiError.toString());
+        authListener.onError(PlatformConfig.PlatformType.QQ,uiError.toString());
     }
 
     @Override
     public void onCancel() {
-        authListener.onCancel(1);
+        authListener.onCancel(PlatformConfig.PlatformType.QQ);
     }
 
     private void initOpenidAndToken(JSONObject jsonObject) {

@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 
-import com.jandzy.sharelibrary.PlatformType;
+import com.jandzy.sharelibrary.PlatformConfig;
 import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.tencent.connect.common.Constants;
@@ -24,7 +24,7 @@ public class QQShareHandler implements IShareHandler {
     @Override
     public void init(Context context) {
         this.mContext = context;
-        mTencent = Tencent.createInstance(PlatformType.QQ_APP_ID, this.mContext);
+        mTencent = Tencent.createInstance("", this.mContext);
 
     }
 
