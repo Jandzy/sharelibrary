@@ -71,6 +71,8 @@ public class ShareManager {
 
     }
 
+
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mShareHandle.onActivityResult(requestCode, resultCode, data);
     }
