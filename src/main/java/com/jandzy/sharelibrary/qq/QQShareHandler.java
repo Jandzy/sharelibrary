@@ -24,7 +24,7 @@ public class QQShareHandler implements IShareHandler {
     @Override
     public void init(Context context) {
         this.mContext = context;
-        mTencent = Tencent.createInstance("", this.mContext);
+        mTencent = Tencent.createInstance(PlatformConfig.getAppId(PlatformConfig.PlatformType.QQ), this.mContext);
 
     }
 
