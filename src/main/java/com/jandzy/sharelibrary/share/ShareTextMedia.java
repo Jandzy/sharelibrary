@@ -1,9 +1,10 @@
 package com.jandzy.sharelibrary.share;
 
 /**
- * Created by jrazy on 2017/2/20.
+ * 分享文字
  */
 public class ShareTextMedia implements IShareMedia {
+
     private String text = "";
 
     public String getText() {

@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.qq.QQShareHandler;
+import com.jandzy.sharelibrary.share.IShareMedia;
 import com.tencent.tauth.Tencent;
 
 import java.util.HashMap;
@@ -72,6 +73,13 @@ public class ShareManager {
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
         mShareHandle.authorize(fragment, authListener);
+
+    }
+
+    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia){
+        this.mShareHandle = getShareHandler(platformType);
+        mShareHandle.init(mContext);
+        mShareHandle.share(activity,shareMedia);
 
     }
 

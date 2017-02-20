@@ -10,9 +10,14 @@ import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.PlatformConfig;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.listener.QqAuthorizeIUiListener;
+import com.jandzy.sharelibrary.share.IShareMedia;
+import com.jandzy.sharelibrary.share.ShareWebMedia;
 import com.tencent.connect.common.Constants;
+import com.tencent.connect.share.QQShare;
 import com.tencent.open.utils.ThreadManager;
+import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
+import com.tencent.tauth.UiError;
 
 /**
  * QQ 登陆、分享实现类
@@ -20,9 +25,12 @@ import com.tencent.tauth.Tencent;
 public class QQShareHandler implements IShareHandler {
 
     private Tencent mTencent;
+
     private Context mContext;
 
     private QqAuthorizeIUiListener qqAuthorizeIUiListener;
+
+    private int shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;//qq分享类型
 
     @Override
     public void init(Context context) {
@@ -44,17 +52,41 @@ public class QQShareHandler implements IShareHandler {
 
 
     @Override
-    public void share() {
+    public void share(Activity activity,IShareMedia shareMedia) {
+        Bundle params = new Bundle();
+        if (shareMedia instanceof ShareWebMedia) {
+            ShareWebMedia shareWebMedia = ((ShareWebMedia) shareMedia);
+            params.putString(QQShare.SHARE_TO_QQ_TITLE,shareWebMedia.getTitle());
+            params.putString(QQShare.SHARE_TO_QQ_SUMMARY,shareWebMedia.getSummary());
+            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,shareWebMedia.getTargetUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,shareWebMedia.getImageUrl());
+        }
 
+        doShareToQQ(activity,params);
     }
 
-    private void doShareToQQ(final Bundle params) {
+    private void doShareToQQ(final Activity activity, final Bundle params) {
         // QQ分享要在主线程做
         ThreadManager.getMainHandler().post(new Runnable() {
             @Override
             public void run() {
                 if (null != mTencent) {
-//                    mTencent.shareToQQ(mContext, params, qqShareListener);
+                    mTencent.shareToQQ(activity, params, new IUiListener() {
+                        @Override
+                        public void onComplete(Object o) {
+
+                        }
+
+                        @Override
+                        public void onError(UiError uiError) {
+
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
                 }
             }
         });
