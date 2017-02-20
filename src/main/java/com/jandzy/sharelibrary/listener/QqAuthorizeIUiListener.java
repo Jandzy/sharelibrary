@@ -1,4 +1,4 @@
-package com.jandzy.sharelibrary.qq;
+package com.jandzy.sharelibrary.listener;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -16,9 +16,9 @@ import com.tencent.tauth.UiError;
 import org.json.JSONObject;
 
 /**
- * Created by jrazy on 2017/2/16.
+ * qq 返回接口
  */
-public class QQBaseIUiListener implements IUiListener {
+public class QqAuthorizeIUiListener implements IUiListener {
 
     private AuthListener authListener;
     private Tencent mTencent;
@@ -27,7 +27,7 @@ public class QQBaseIUiListener implements IUiListener {
     private UserInfo mUserInfo = null;
 
 
-    public QQBaseIUiListener(AuthListener authListener, Tencent tencent,Context context){
+    public QqAuthorizeIUiListener(AuthListener authListener, Tencent tencent, Context context){
         this.authListener = authListener;
         this.mTencent = tencent;
         this.mContext = context;
@@ -41,7 +41,7 @@ public class QQBaseIUiListener implements IUiListener {
         }
         JSONObject response = (JSONObject)o;
         initOpenidAndToken(response);
-        
+
         mUserInfo = new UserInfo(mContext, mTencent.getQQToken());
         if(!ready(mContext)){
             return;

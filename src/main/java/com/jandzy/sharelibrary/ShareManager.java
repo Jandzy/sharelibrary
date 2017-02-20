@@ -3,10 +3,14 @@ package com.jandzy.sharelibrary;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.qq.QQShareHandler;
+import com.tencent.tauth.Tencent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,8 +76,23 @@ public class ShareManager {
     }
 
 
+    //获取app名字
+    private String getAppName(){
+        try {
+            PackageManager packageManager = mContext.getApplicationContext().getPackageManager();
+            ApplicationInfo packageInfo= packageManager.getApplicationInfo(mContext.getPackageName(),0);
+            return (String) packageManager.getApplicationLabel(packageInfo);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         mShareHandle.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void onDestroy(){
+        mShareHandle.onDestroy();
     }
 }

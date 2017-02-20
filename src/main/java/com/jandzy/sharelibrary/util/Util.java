@@ -1,5 +1,7 @@
 package com.jandzy.sharelibrary.util;
 
+import android.content.pm.PackageManager;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;

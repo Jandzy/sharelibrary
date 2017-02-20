@@ -20,4 +20,6 @@ public interface IShareHandler {
     void share();
 
     void onActivityResult(int requestCode, int resultCode, Intent data);
+
+    void onDestroy();
 }
