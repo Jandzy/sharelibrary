@@ -18,7 +18,7 @@ public interface IShareHandler {
     void authorize(Activity activity, AuthListener authListener);
     void authorize(Fragment fragment, AuthListener authListener);
 
-    void share(Activity activity, IShareMedia shareMedia);
+    void share(Activity activity, IShareMedia shareMedia,AuthListener authListener);
 
     void onActivityResult(int requestCode, int resultCode, Intent data);
 

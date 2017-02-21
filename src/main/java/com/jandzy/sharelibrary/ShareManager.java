@@ -76,10 +76,10 @@ public class ShareManager {
 
     }
 
-    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia){
+    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia, AuthListener authListener){
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
-        mShareHandle.share(activity,shareMedia);
+        mShareHandle.share(activity,shareMedia,authListener);
 
     }
 

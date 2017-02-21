@@ -5,12 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.PlatformConfig;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.listener.QqAuthorizeIUiListener;
+import com.jandzy.sharelibrary.listener.QqShareListener;
 import com.jandzy.sharelibrary.share.IShareMedia;
+import com.jandzy.sharelibrary.share.ShareImgMedia;
+import com.jandzy.sharelibrary.share.ShareMusicMedia;
 import com.jandzy.sharelibrary.share.ShareWebMedia;
 import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
@@ -19,18 +23,33 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
+import org.json.JSONObject;
+
 /**
  * QQ 登陆、分享实现类
  */
 public class QQShareHandler implements IShareHandler {
+    private static final String TAG = "QQShareHandler";
 
     private Tencent mTencent;
 
     private Context mContext;
 
-    private QqAuthorizeIUiListener qqAuthorizeIUiListener;
+    private QqAuthorizeIUiListener qqAuthorizeIUiListener;  //qq登陆返回监听
+
+    private QqShareListener qqShareListener;//qq分享返回监听
 
     private int shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;//qq分享类型
+
+    /**
+     *     if ((mExtarFlag & QQShare.SHARE_TO_QQ_FLAG_QZONE_AUTO_OPEN) != 0) {
+     *          showToast("在好友选择列表会自动打开分享到qzone的弹窗~~~");
+     *     } else if ((mExtarFlag & QQShare.SHARE_TO_QQ_FLAG_QZONE_ITEM_HIDE) != 0) {
+     *          showToast("在好友选择列表隐藏了qzone分享选项~~~");
+     *     }
+     */
+    private int mExtarFlag = 0x00;//qq分享时候是否显示qq空间
+
 
     @Override
     public void init(Context context) {
@@ -52,16 +71,49 @@ public class QQShareHandler implements IShareHandler {
 
 
     @Override
-    public void share(Activity activity,IShareMedia shareMedia) {
+    public void share(Activity activity,IShareMedia shareMedia,AuthListener authListener) {
         Bundle params = new Bundle();
+
+        //默认分享格式
         if (shareMedia instanceof ShareWebMedia) {
             ShareWebMedia shareWebMedia = ((ShareWebMedia) shareMedia);
+
+            shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;
+
             params.putString(QQShare.SHARE_TO_QQ_TITLE,shareWebMedia.getTitle());
             params.putString(QQShare.SHARE_TO_QQ_SUMMARY,shareWebMedia.getSummary());
             params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,shareWebMedia.getTargetUrl());
             params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,shareWebMedia.getImageUrl());
+
         }
 
+        //带audio的分享
+        if (shareMedia instanceof ShareMusicMedia) {
+            ShareMusicMedia musiceMedia = ((ShareMusicMedia) shareMedia);
+
+            shareType = QQShare.SHARE_TO_QQ_TYPE_AUDIO;
+
+            params.putString(QQShare.SHARE_TO_QQ_TITLE,musiceMedia.getTitle());
+            params.putString(QQShare.SHARE_TO_QQ_SUMMARY,musiceMedia.getSummary());
+            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,musiceMedia.getTargetUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,musiceMedia.getImageUrl());
+            params.putString(QQShare.SHARE_TO_QQ_AUDIO_URL,musiceMedia.getAudioUrl());
+        }
+
+        /**
+         *  纯照片分享只支持本地照片分享
+         */
+        if (shareMedia instanceof ShareImgMedia) {
+            ShareImgMedia imgMedia = ((ShareImgMedia) shareMedia);
+
+            shareType = QQShare.SHARE_TO_QQ_TYPE_IMAGE;
+
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imgMedia.getLocalImgUrl());
+        }
+
+        params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, shareType);
+        params.putInt(QQShare.SHARE_TO_QQ_EXT_INT, mExtarFlag);
+        qqShareListener = new QqShareListener(authListener);
         doShareToQQ(activity,params);
     }
 
@@ -71,22 +123,7 @@ public class QQShareHandler implements IShareHandler {
             @Override
             public void run() {
                 if (null != mTencent) {
-                    mTencent.shareToQQ(activity, params, new IUiListener() {
-                        @Override
-                        public void onComplete(Object o) {
-
-                        }
-
-                        @Override
-                        public void onError(UiError uiError) {
-
-                        }
-
-                        @Override
-                        public void onCancel() {
-
-                        }
-                    });
+                    mTencent.shareToQQ(activity, params, qqShareListener);
                 }
             }
         });
@@ -100,6 +137,10 @@ public class QQShareHandler implements IShareHandler {
         if (requestCode == Constants.REQUEST_LOGIN ||
                 requestCode == Constants.REQUEST_APPBAR) {
             Tencent.onActivityResultData(requestCode, resultCode, data, qqAuthorizeIUiListener);
+        }
+
+        if (requestCode == Constants.REQUEST_QQ_SHARE) {
+            Tencent.onActivityResultData(requestCode,resultCode,data,qqShareListener);
         }
     }
 
