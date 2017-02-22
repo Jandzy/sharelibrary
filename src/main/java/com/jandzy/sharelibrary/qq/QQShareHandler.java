@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.PlatformConfig;
@@ -14,16 +13,12 @@ import com.jandzy.sharelibrary.listener.QqAuthorizeIUiListener;
 import com.jandzy.sharelibrary.listener.QqShareListener;
 import com.jandzy.sharelibrary.share.IShareMedia;
 import com.jandzy.sharelibrary.share.ShareImgMedia;
-import com.jandzy.sharelibrary.share.ShareMusicMedia;
-import com.jandzy.sharelibrary.share.ShareWebMedia;
+import com.jandzy.sharelibrary.share.ShareAudioMedia;
+import com.jandzy.sharelibrary.share.ShareDefaultMedia;
 import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
 import com.tencent.open.utils.ThreadManager;
-import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
-import com.tencent.tauth.UiError;
-
-import org.json.JSONObject;
 
 /**
  * QQ 登陆、分享实现类
@@ -75,21 +70,21 @@ public class QQShareHandler implements IShareHandler {
         Bundle params = new Bundle();
 
         //默认分享格式
-        if (shareMedia instanceof ShareWebMedia) {
-            ShareWebMedia shareWebMedia = ((ShareWebMedia) shareMedia);
+        if (shareMedia instanceof ShareDefaultMedia) {
+            ShareDefaultMedia shareDefaultMedia = ((ShareDefaultMedia) shareMedia);
 
             shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;
 
-            params.putString(QQShare.SHARE_TO_QQ_TITLE,shareWebMedia.getTitle());
-            params.putString(QQShare.SHARE_TO_QQ_SUMMARY,shareWebMedia.getSummary());
-            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,shareWebMedia.getTargetUrl());
-            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,shareWebMedia.getImageUrl());
+            params.putString(QQShare.SHARE_TO_QQ_TITLE, shareDefaultMedia.getTitle());
+            params.putString(QQShare.SHARE_TO_QQ_SUMMARY, shareDefaultMedia.getSummary());
+            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareDefaultMedia.getTargetUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, shareDefaultMedia.getImageUrl());
 
         }
 
         //带audio的分享
-        if (shareMedia instanceof ShareMusicMedia) {
-            ShareMusicMedia musiceMedia = ((ShareMusicMedia) shareMedia);
+        if (shareMedia instanceof ShareAudioMedia) {
+            ShareAudioMedia musiceMedia = ((ShareAudioMedia) shareMedia);
 
             shareType = QQShare.SHARE_TO_QQ_TYPE_AUDIO;
 
@@ -116,6 +111,7 @@ public class QQShareHandler implements IShareHandler {
         qqShareListener = new QqShareListener(authListener);
         doShareToQQ(activity,params);
     }
+
 
     private void doShareToQQ(final Activity activity, final Bundle params) {
         // QQ分享要在主线程做

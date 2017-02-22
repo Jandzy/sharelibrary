@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.qq.QQShareHandler;
+import com.jandzy.sharelibrary.qq.QZoneShareHandler;
 import com.jandzy.sharelibrary.share.IShareMedia;
 import com.tencent.tauth.Tencent;
 
@@ -51,7 +52,7 @@ public class ShareManager {
 
                     break;
                 case QQZONE:
-
+                    mMapShareHandler.put(platformType,new QZoneShareHandler());
                     break;
                 case SINA:
 
@@ -77,6 +78,13 @@ public class ShareManager {
     }
 
     public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia, AuthListener authListener){
+        this.mShareHandle = getShareHandler(platformType);
+        mShareHandle.init(mContext);
+        mShareHandle.share(activity,shareMedia,authListener);
+
+    }
+
+    public void shareToQZone(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia, AuthListener authListener){
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
         mShareHandle.share(activity,shareMedia,authListener);
