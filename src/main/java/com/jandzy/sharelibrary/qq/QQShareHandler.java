@@ -8,13 +8,11 @@ import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.PlatformConfig;
+import com.jandzy.sharelibrary.ShareType;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.listener.QqAuthorizeIUiListener;
 import com.jandzy.sharelibrary.listener.QqShareListener;
-import com.jandzy.sharelibrary.share.IShareMedia;
-import com.jandzy.sharelibrary.share.ShareImgMedia;
-import com.jandzy.sharelibrary.share.ShareAudioMedia;
-import com.jandzy.sharelibrary.share.ShareDefaultMedia;
+import com.jandzy.sharelibrary.sharecontent.ShareContentMedia;
 import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
 import com.tencent.open.utils.ThreadManager;
@@ -66,44 +64,41 @@ public class QQShareHandler implements IShareHandler {
 
 
     @Override
-    public void share(Activity activity,IShareMedia shareMedia,AuthListener authListener) {
+    public void share(Activity activity, ShareContentMedia contentMedia, int type,AuthListener authListener) {
         Bundle params = new Bundle();
 
         //默认分享格式
-        if (shareMedia instanceof ShareDefaultMedia) {
-            ShareDefaultMedia shareDefaultMedia = ((ShareDefaultMedia) shareMedia);
+        if (type == ShareType.QQ_TYPE_DEFAULT) {
 
             shareType = QQShare.SHARE_TO_QQ_TYPE_DEFAULT;
 
-            params.putString(QQShare.SHARE_TO_QQ_TITLE, shareDefaultMedia.getTitle());
-            params.putString(QQShare.SHARE_TO_QQ_SUMMARY, shareDefaultMedia.getSummary());
-            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, shareDefaultMedia.getTargetUrl());
-            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, shareDefaultMedia.getImageUrl());
+            params.putString(QQShare.SHARE_TO_QQ_TITLE, contentMedia.getTitle());
+            params.putString(QQShare.SHARE_TO_QQ_SUMMARY, contentMedia.getSummary());
+            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL, contentMedia.getTargetUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL, contentMedia.getImageUrl());
 
         }
 
         //带audio的分享
-        if (shareMedia instanceof ShareAudioMedia) {
-            ShareAudioMedia musiceMedia = ((ShareAudioMedia) shareMedia);
+        if (type == ShareType.QQ_TYPE_AUDIO) {
 
             shareType = QQShare.SHARE_TO_QQ_TYPE_AUDIO;
 
-            params.putString(QQShare.SHARE_TO_QQ_TITLE,musiceMedia.getTitle());
-            params.putString(QQShare.SHARE_TO_QQ_SUMMARY,musiceMedia.getSummary());
-            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,musiceMedia.getTargetUrl());
-            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,musiceMedia.getImageUrl());
-            params.putString(QQShare.SHARE_TO_QQ_AUDIO_URL,musiceMedia.getAudioUrl());
+            params.putString(QQShare.SHARE_TO_QQ_TITLE,contentMedia.getTitle());
+            params.putString(QQShare.SHARE_TO_QQ_SUMMARY,contentMedia.getSummary());
+            params.putString(QQShare.SHARE_TO_QQ_TARGET_URL,contentMedia.getTargetUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_URL,contentMedia.getImageUrl());
+            params.putString(QQShare.SHARE_TO_QQ_AUDIO_URL,contentMedia.getAudioUrl());
         }
 
         /**
          *  纯照片分享只支持本地照片分享
          */
-        if (shareMedia instanceof ShareImgMedia) {
-            ShareImgMedia imgMedia = ((ShareImgMedia) shareMedia);
+        if (type == ShareType.QQ_TYPE_LOCAL_IMAGE_URL) {
 
             shareType = QQShare.SHARE_TO_QQ_TYPE_IMAGE;
 
-            params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,imgMedia.getLocalImgUrl());
+            params.putString(QQShare.SHARE_TO_QQ_IMAGE_LOCAL_URL,contentMedia.getLocalImgUrl());
         }
 
         params.putInt(QQShare.SHARE_TO_QQ_KEY_TYPE, shareType);

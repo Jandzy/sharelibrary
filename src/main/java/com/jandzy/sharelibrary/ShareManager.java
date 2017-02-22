@@ -4,15 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.qq.QQShareHandler;
 import com.jandzy.sharelibrary.qq.QZoneShareHandler;
-import com.jandzy.sharelibrary.share.IShareMedia;
-import com.tencent.tauth.Tencent;
+import com.jandzy.sharelibrary.sharecontent.ShareContentMedia;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,13 +44,13 @@ public class ShareManager {
                 case WX:
                     break;
                 case QQ:
-                    mMapShareHandler.put(platformType,new QQShareHandler());
+                    mMapShareHandler.put(platformType, new QQShareHandler());
                     break;
                 case WX_CIRCLE:
 
                     break;
                 case QQZONE:
-                    mMapShareHandler.put(platformType,new QZoneShareHandler());
+                    mMapShareHandler.put(platformType, new QZoneShareHandler());
                     break;
                 case SINA:
 
@@ -77,26 +75,33 @@ public class ShareManager {
 
     }
 
-    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia, AuthListener authListener){
+    /**
+     * @param activity
+     * @param platformType 代表那个平台，微信、QQ、QZONE、Sina
+     * @param contentMedia 分享内容
+     * @param  type 分享内容的类型，对应ShareType类里面的值
+     * @param authListener  回调借口
+     */
+    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType, ShareContentMedia contentMedia, int type, AuthListener authListener) {
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
-        mShareHandle.share(activity,shareMedia,authListener);
+        mShareHandle.share(activity, contentMedia, type,authListener);
 
     }
 
-    public void shareToQZone(Activity activity, PlatformConfig.PlatformType platformType,IShareMedia shareMedia, AuthListener authListener){
+    public void shareToQZone(Activity activity, PlatformConfig.PlatformType platformType, ShareContentMedia contentMedia, int type, AuthListener authListener) {
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
-        mShareHandle.share(activity,shareMedia,authListener);
+        mShareHandle.share(activity, contentMedia, type,authListener);
 
     }
 
 
     //获取app名字
-    private String getAppName(){
+    private String getAppName() {
         try {
             PackageManager packageManager = mContext.getApplicationContext().getPackageManager();
-            ApplicationInfo packageInfo= packageManager.getApplicationInfo(mContext.getPackageName(),0);
+            ApplicationInfo packageInfo = packageManager.getApplicationInfo(mContext.getPackageName(), 0);
             return (String) packageManager.getApplicationLabel(packageInfo);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
@@ -108,7 +113,7 @@ public class ShareManager {
         mShareHandle.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onDestroy(){
+    public void onDestroy() {
         mShareHandle.onDestroy();
     }
 }
