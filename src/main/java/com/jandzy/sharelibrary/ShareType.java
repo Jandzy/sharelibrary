@@ -14,17 +14,23 @@ package com.jandzy.sharelibrary;
 public class ShareType {
 
     //分享到QQ  title、summary、targetUrl、imgUrl、appName
-    public static int QQ_TYPE_DEFAULT = 0;
+    public static  final int QQ_TYPE_DEFAULT = 0;
 
     //分享到QQ  title、summary、targetUrl、imgUrl、appName、audioUrl
-    public static int QQ_TYPE_AUDIO = 1;
+    public static  final int QQ_TYPE_AUDIO = 1;
 
     //分享到QQ  localImgUrl
-    public static int QQ_TYPE_LOCAL_IMAGE_URL = 2;
+    public static  final int QQ_TYPE_LOCAL_IMAGE_URL = 2;
 
     //分享到QQ（应用）  title、summary、imgUrl、appName
-    public static int QQ_TYPE_APPLICATION = 3;
+    public static  final int QQ_TYPE_APPLICATION = 3;
 
-    //分享到Qzone  title、summary、targetUrl、imageUrls
-    public static int QZONE_TYPE_IMAGE_TEXT;
+    //分享到Qzone(转发)  title、summary、targetUrl、imageUrls
+    public static  final int QZONE_TYPE_IMAGE_TEXT = 4;
+
+    //分享到Qzone(说说) summary、imageUrls
+    public static  final int QZONE_TYPE_SHUOSHUO = 5;
+
+    //分享到Qzone(视频) summary、localAudioUrl
+    public static  final int QZONE_TYPE_AUDIO = 6;
 }

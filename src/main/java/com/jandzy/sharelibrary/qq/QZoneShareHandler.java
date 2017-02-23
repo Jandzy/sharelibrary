@@ -13,9 +13,12 @@ import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.listener.QqShareListener;
 import com.jandzy.sharelibrary.sharecontent.ShareContentMedia;
 import com.tencent.connect.common.Constants;
+import com.tencent.connect.share.QzonePublish;
 import com.tencent.connect.share.QzoneShare;
 import com.tencent.open.utils.ThreadManager;
 import com.tencent.tauth.Tencent;
+
+import static com.jandzy.sharelibrary.ShareType.QZONE_TYPE_IMAGE_TEXT;
 
 /**
  * 分享到qq空间
@@ -55,15 +58,34 @@ public class QZoneShareHandler implements IShareHandler {
 
         Bundle params = new Bundle();
 
-        if (type == ShareType.QZONE_TYPE_IMAGE_TEXT) {
+        switch (type) {
+            case ShareType.QZONE_TYPE_IMAGE_TEXT:
+                shareType = QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT;
+                params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, shareType);
 
-            shareType = QzoneShare.SHARE_TO_QZONE_TYPE_IMAGE_TEXT;
-            params.putString(QzoneShare.SHARE_TO_QQ_TITLE, contentMedia.getTitle());
-            params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, contentMedia.getSummary());
-            params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, contentMedia.getTargetUrl());
-//            params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, contentMedia.getImageUrl());
-            params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, shareType);
-            doShareToQzone(activity, params);
+                params.putString(QzoneShare.SHARE_TO_QQ_TITLE, contentMedia.getTitle());
+                params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, contentMedia.getSummary());
+                params.putString(QzoneShare.SHARE_TO_QQ_TARGET_URL, contentMedia.getTargetUrl());
+                params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, contentMedia.getImgUrls());
+
+                doShareToQzone(activity, params);
+                break;
+            case ShareType.QZONE_TYPE_SHUOSHUO:
+                shareType = QzonePublish.PUBLISH_TO_QZONE_TYPE_PUBLISHMOOD;
+                params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, shareType);
+
+                params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, contentMedia.getSummary());
+                params.putStringArrayList(QzoneShare.SHARE_TO_QQ_IMAGE_URL, contentMedia.getImgUrls());
+                doPublishToQzone(activity,params);
+                break;
+            case ShareType.QZONE_TYPE_AUDIO:
+                shareType = QzonePublish.PUBLISH_TO_QZONE_TYPE_PUBLISHMOOD;
+                params.putInt(QzoneShare.SHARE_TO_QZONE_KEY_TYPE, shareType);
+
+                params.putString(QzoneShare.SHARE_TO_QQ_SUMMARY, contentMedia.getSummary());
+                params.putString(QzonePublish.PUBLISH_TO_QZONE_VIDEO_PATH, contentMedia.getLocalAudioUrl());
+                doPublishToQzone(activity,params);
+                break;
         }
 
     }
@@ -86,6 +108,17 @@ public class QZoneShareHandler implements IShareHandler {
         });
     }
 
+    private void doPublishToQzone(final Activity activity, final Bundle params) {
+        ThreadManager.getMainHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (null != mTencent) {
+                    mTencent.publishToQzone(activity, params, qqShareListener);
+                }
+            }
+        });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_QZONE_SHARE) {
@@ -95,6 +128,8 @@ public class QZoneShareHandler implements IShareHandler {
 
     @Override
     public void onDestroy() {
-
+        if (mTencent != null) {
+            mTencent.releaseResource();
+        }
     }
 }
