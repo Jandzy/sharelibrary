@@ -11,6 +11,7 @@ import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.qq.QQShareHandler;
 import com.jandzy.sharelibrary.qq.QZoneShareHandler;
 import com.jandzy.sharelibrary.sharecontent.ShareContentMedia;
+import com.jandzy.sharelibrary.weixin.WXShareHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +43,7 @@ public class ShareManager {
         if (mMapShareHandler.get(platformType) == null) {
             switch (platformType) {
                 case WX:
+                    mMapShareHandler.put(platformType, new WXShareHandler());
                     break;
                 case QQ:
                     mMapShareHandler.put(platformType, new QQShareHandler());
@@ -82,20 +84,12 @@ public class ShareManager {
      * @param  type 分享内容的类型，对应ShareType类里面的值
      * @param authListener  回调借口
      */
-    public void shareToQq(Activity activity, PlatformConfig.PlatformType platformType, ShareContentMedia contentMedia, int type, AuthListener authListener) {
+    public void share(Activity activity, PlatformConfig.PlatformType platformType, ShareContentMedia contentMedia, int type, AuthListener authListener) {
         this.mShareHandle = getShareHandler(platformType);
         mShareHandle.init(mContext);
         mShareHandle.share(activity, contentMedia, type,authListener);
 
     }
-
-    public void shareToQZone(Activity activity, PlatformConfig.PlatformType platformType, ShareContentMedia contentMedia, int type, AuthListener authListener) {
-        this.mShareHandle = getShareHandler(platformType);
-        mShareHandle.init(mContext);
-        mShareHandle.share(activity, contentMedia, type,authListener);
-
-    }
-
 
     //获取app名字
     private String getAppName() {

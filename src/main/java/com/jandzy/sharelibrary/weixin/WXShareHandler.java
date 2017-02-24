@@ -7,9 +7,13 @@ import android.support.v4.app.Fragment;
 
 import com.jandzy.sharelibrary.IShareHandler;
 import com.jandzy.sharelibrary.PlatformConfig;
+import com.jandzy.sharelibrary.ShareType;
 import com.jandzy.sharelibrary.listener.AuthListener;
 import com.jandzy.sharelibrary.sharecontent.ShareContentMedia;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
+import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -46,7 +50,28 @@ public class WXShareHandler implements IShareHandler {
 
     @Override
     public void share(Activity activity, ShareContentMedia contentMedia, int type, AuthListener authListener) {
+        switch (type) {
+            case ShareType.WX_CICLE_TYPE_TEXT:
+                WXTextObject textObject = new WXTextObject();
+                textObject.text = contentMedia.getSummary();
 
+                WXMediaMessage msg = new WXMediaMessage();
+                msg.mediaObject = textObject;
+                msg.description = contentMedia.getSummary();
+
+                SendMessageToWX.Req req = new SendMessageToWX.Req();
+                req.transaction = buildTransaction("text");
+                req.message = msg;
+                req.scene = SendMessageToWX.Req.WXSceneTimeline;
+                api.sendReq(req);
+                break;
+        }
+
+
+    }
+
+    private String buildTransaction(final String type) {
+        return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
 
     @Override

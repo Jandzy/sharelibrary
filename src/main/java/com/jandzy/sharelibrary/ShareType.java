@@ -33,4 +33,36 @@ public class ShareType {
 
     //分享到Qzone(视频) summary、localAudioUrl
     public static  final int QZONE_TYPE_AUDIO = 6;
+
+    //分享到微信聊天界面(纯文字)  summary
+    public static final int WX_CHAT_TYPE_TEXT = 7;
+
+    //分享到微信聊天界面(图片)
+    public static final int WX_CHAT_TYPE_IMAGE = 8;
+
+    //分享到微信聊天界面（音乐）
+    public static final int WX_CHAT_TYPE_MUSIC = 9;
+
+    //分享到微信聊天界面（视频）
+    public static final int WX_CHAT_TYPE_AUDIO = 10;
+
+    //分享到微信聊天界面（web）
+    public static final int WX_CHAT_TYPE_WEB = 11;
+
+    //分享到微信聊天界面(纯文字)  summary
+    public static final int WX_CICLE_TYPE_TEXT = 12;
+
+    //分享到微信聊天界面(图片)
+    public static final int WX_CICLE_TYPE_IMAGE = 13;
+
+    //分享到微信聊天界面（音乐）
+    public static final int WX_CICLE_TYPE_MUSIC = 14;
+
+    //分享到微信聊天界面（视频）
+    public static final int WX_CICLE_TYPE_AUDIO = 15;
+
+    //分享到微信聊天界面（web）
+    public static final int WX_CICLE_TYPE_WEB = 16;
+
+
 }
